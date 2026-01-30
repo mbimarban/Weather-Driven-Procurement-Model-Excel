@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather-Driven Procurement Model | Case Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #2d3748;
+            background: #f7fafc;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 50px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        h1 {
+            color: #1a365d;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #2b6cb0;
+            padding-bottom: 15px;
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #1a365d;
+            font-size: 1.5em;
+            margin: 35px 0 20px 0;
+            padding-left: 15px;
+            border-left: 4px solid #2b6cb0;
+        }
+        
+        h3 {
+            color: #2d3748;
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .highlight-box {
+            background: #ebf8ff;
+            border-left: 4px solid #2b6cb0;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .highlight-box strong {
+            color: #2b6cb0;
+        }
+        
+        .formula-box {
+            background: #1a365d;
+            color: #e2e8f0;
+            padding: 20px 25px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .formula-box code {
+            color: #63b3ed;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+        
+        th {
+            background: #2b6cb0;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        tr:hover {
+            background-color: #f7fafc;
+        }
+        
+        .result-box {
+            background: #276749;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .result-box .big-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .warning-box {
+            background: #fffaf0;
+            border-left: 4px solid #c05621;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .warning-box strong {
+            color: #c05621;
+        }
+        
+        .step-container {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .step-number {
+            background: #2b6cb0;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-content h4 {
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #2b6cb0;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 3px;
+        }
+        
+        .tag.green {
+            background: #276749;
+        }
+        
+        .tag.orange {
+            background: #975a16;
+        }
+        
+        .tag.gray {
+            background: #4a5568;
+        }
+        
+        .comparison-table {
+            margin: 25px 0;
+        }
+        
+        .comparison-table td:nth-child(2),
+        .comparison-table td:nth-child(3) {
+            text-align: center;
+        }
+        
+        .checkmark {
+            color: #276749;
+            font-weight: bold;
+        }
+        
+        .crossmark {
+            color: #c53030;
+        }
+        
+        .flow-diagram {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 25px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .flow-diagram .arrow {
+            color: #2b6cb0;
+            font-size: 1.5em;
+            margin: 0 10px;
+        }
+        
+        .flow-diagram .flow-item {
+            display: inline-block;
+            background: white;
+            border: 2px solid #2b6cb0;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin: 5px;
+            font-weight: 500;
+        }
+        
+        .author-box {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 40px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .author-box a {
+            color: #2b6cb0;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .author-box a:hover {
+            text-decoration: underline;
+        }
+        
+        .metric-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .metric-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .metric-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+        
+        .metric-card .label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.7em;
+            }
+            
+            .flow-diagram .flow-item {
+                display: block;
+                margin: 10px auto;
+                max-width: 200px;
+            }
+            
+            .flow-diagram .arrow {
+                display: block;
+                transform: rotate(90deg);
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Weather-Driven Procurement Model</h1>
+            <p class="subtitle">Case Study: Prognozowanie popytu na parasole na podstawie pogody i translacja prognozy w decyzję zakupową</p>
+            
+            <div class="highlight-box">
+                <strong>Cel projektu:</strong> Zbudować w Excelu kompletny model, który na podstawie prognozy pogody (opad, temperatura, wiatr) przewiduje popyt na parasole i automatycznie wylicza: ile zamówić, kiedy zamówić, jaki bufor bezpieczeństwa utrzymać.
+            </div>
+            
+            <!-- KEY METRICS -->
+            <div class="metric-cards">
+                <div class="metric-card">
+                    <div class="value">90.4%</div>
+                    <div class="label">R² (Model Accuracy)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">406</div>
+                    <div class="label">Standard Error (units)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">19</div>
+                    <div class="label">Months of Data</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">3</div>
+                    <div class="label">Weather Variables</div>
+                </div>
+            </div>
+            
+            <!-- SEKCJA 1: PROBLEM BIZNESOWY -->
+            <h2>1. Problem biznesowy</h2>
+            
+            <p>Firma "The Umbrella Company" sprzedaje parasole. Sprzedaż silnie zależy od pogody — im więcej deszczu, tym większy popyt. Jako <strong>Procurement Manager</strong> musisz odpowiedzieć na pytania:</p>
+            
+            <ul>
+                <li><strong>Ile zamówić</strong> na kolejny miesiąc?</li>
+                <li><strong>Kiedy złożyć zamówienie</strong> (punkt zamówienia)?</li>
+                <li><strong>Jaki bufor trzymać</strong> na niepewność prognozy?</li>
+                <li><strong>Jak wykorzystać prognozę pogody</strong> do planowania zakupów?</li>
+            </ul>
+            
+            <p>Tradycyjne podejście "na czuja" lub średnia historyczna nie uwzględnia kluczowego drivera — pogody. Dlatego zbudowaliśmy <strong>driver-based forecasting model</strong>.</p>
+            
+            <!-- SEKCJA 2: DANE -->
+            <h2>2. Dane wejściowe</h2>
+            
+            <p>Dysponowaliśmy danymi miesięcznymi za okres 19 miesięcy (czerwiec 2023 – grudzień 2024):</p>
+            
+            <table>
+                <tr>
+                    <th>Zmienna</th>
+                    <th>Opis</th>
+                    <th>Zakres wartości</th>
+                </tr>
+                <tr>
+                    <td>Rainfall (mm)</td>
+                    <td>Suma opadów w miesiącu</td>
+                    <td>42 – 118 mm</td>
+                </tr>
+                <tr>
+                    <td>Temperature (°C)</td>
+                    <td>Średnia temperatura</td>
+                    <td>3 – 31°C</td>
+                </tr>
+                <tr>
+                    <td>Wind Speed (km/h)</td>
+                    <td>Średnia prędkość wiatru</td>
+                    <td>10 – 19 km/h</td>
+                </tr>
+                <tr>
+                    <td>Quantity Sold</td>
+                    <td>Sprzedaż parasoli (szt.)</td>
+                    <td>1,745 – 5,555 szt.</td>
+                </tr>
+            </table>
+            
+            <!-- SEKCJA 3: REGRESJA -->
+            <h2>3. Model regresji (Driver-Based Forecasting)</h2>
+            
+            <h3>Model 1: Tylko opad (Simple Regression)</h3>
+            
+            <p>Najpierw sprawdziliśmy, czy sam opad wystarczy do prognozowania popytu:</p>
+            
+            <div class="formula-box">
+                <code>Demand = Intercept + b_Rainfall × Rainfall</code><br><br>
+                Demand = -630.33 + 47.14 × Rainfall
+            </div>
+            
+            <table>
+                <tr>
+                    <th>Metryka</th>
+                    <th>Wartość</th>
+                    <th>Interpretacja</th>
+                </tr>
+                <tr>
+                    <td>R²</td>
+                    <td><strong>0.822 (82%)</strong></td>
+                    <td>Model wyjaśnia 82% zmienności popytu</td>
+                </tr>
+                <tr>
+                    <td>Standard Error</td>
+                    <td>518 szt.</td>
+                    <td>Typowy błąd prognozy</td>
+                </tr>
+                <tr>
+                    <td>Współczynnik Rainfall</td>
+                    <td>+47.14</td>
+                    <td>+1 mm deszczu → +47 parasoli</td>
+                </tr>
+                <tr>
+                    <td>P-value (Rainfall)</td>
+                    <td>8.73E-08</td>
+                    <td>Statystycznie bardzo istotne</td>
+                </tr>
+            </table>
+            
+            <div class="highlight-box">
+                <strong>Wniosek:</strong> Opad jest bardzo silnym driverem popytu. Każdy dodatkowy 1 mm deszczu oznacza średnio +47 sprzedanych parasoli.
+            </div>
+            
+            <h3>Model 2: Opad + Temperatura + Wiatr (Multiple Regression)</h3>
+            
+            <p>Rozszerzyliśmy model o dodatkowe zmienne pogodowe:</p>
+            
+            <div class="formula-box">
+                <code>Demand = Intercept + b_Rain × Rain + b_Temp × Temp + b_Wind × Wind</code><br><br>
+                Demand = -2971.68 + 58.40 × Rain + 55.76 × Temp + 32.90 × Wind
+            </div>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>Metryka</th>
+                    <th>Model 1 (Rain)</th>
+                    <th>Model 2 (Weather)</th>
+                </tr>
+                <tr>
+                    <td>R²</td>
+                    <td>82.2%</td>
+                    <td><strong>90.4%</strong> ✓</td>
+                </tr>
+                <tr>
+                    <td>Standard Error</td>
+                    <td>518 szt.</td>
+                    <td><strong>406 szt.</strong> ✓</td>
+                </tr>
+                <tr>
+                    <td>Rainfall (p-value)</td>
+                    <td class="checkmark">✓ istotny</td>
+                    <td class="checkmark">✓ istotny</td>
+                </tr>
+                <tr>
+                    <td>Temperature (p-value)</td>
+                    <td>—</td>
+                    <td class="checkmark">✓ istotny (p=0.025)</td>
+                </tr>
+                <tr>
+                    <td>Wind (p-value)</td>
+                    <td>—</td>
+                    <td class="crossmark">✗ nieistotny (p=0.68)</td>
+                </tr>
+            </table>
+            
+            <div class="warning-box">
+                <strong>Uwaga:</strong> Wind Speed nie jest statystycznie istotny (p-value = 0.68 > 0.05). W produkcyjnym modelu można go usunąć dla uproszczenia. Zostawiliśmy go dla celów demonstracyjnych.
+            </div>
+            
+            <!-- SEKCJA 4: PROCUREMENT LOGIC -->
+            <h2>4. Logika Procurement (od prognozy do zamówienia)</h2>
+            
+            <p>Prognoza popytu to dopiero początek. Jako Procurement Manager musisz przełożyć ją na konkretną decyzję zakupową. Oto pełny łańcuch:</p>
+            
+            <div class="flow-diagram">
+                <span class="flow-item">Prognoza pogody</span>
+                <span class="arrow">→</span>
+                <span class="flow-item">Demand Forecast</span>
+                <span class="arrow">→</span>
+                <span class="flow-item">DLT</span>
+                <span class="arrow">→</span>
+                <span class="flow-item">Safety Stock</span>
+                <span class="arrow">→</span>
+                <span class="flow-item">ROP</span>
+                <span class="arrow">→</span>
+                <span class="flow-item">Order Qty</span>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Demand Forecast (Prognoza popytu)</h4>
+                    <p>Wstawiamy prognozę pogody do równania regresji i otrzymujemy oczekiwany popyt na miesiąc.</p>
+                    <div class="formula-box">
+                        Demand_Forecast = Intercept + b_Rain × Rain + b_Temp × Temp + b_Wind × Wind
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>DLT — Demand During Lead Time (Popyt w czasie dostawy)</h4>
+                    <p>Ile sztuk "zejdzie" w czasie, gdy czekasz na dostawę od momentu złożenia zamówienia.</p>
+                    <div class="formula-box">
+                        DLT = Demand_Forecast × Lead_Time_months
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Safety Stock (Zapas bezpieczeństwa)</h4>
+                    <p>Bufor na niepewność prognozy. Liczymy go z błędu modelu (Sigma_Residual) i poziomu obsługi (Service Level).</p>
+                    <div class="formula-box">
+                        z = NORM.S.INV(Service_Level)<br>
+                        Sigma_LT = Sigma_Residual × √(Lead_Time_months)<br>
+                        <strong>Safety_Stock = z × Sigma_LT</strong>
+                    </div>
+                    <p><em>Dla Service Level = 95% → z ≈ 1.645</em></p>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>ROP — Reorder Point (Punkt zamówienia)</h4>
+                    <p>Poziom zapasu, przy którym powinieneś złożyć zamówienie, żeby nie zabrakło towaru.</p>
+                    <div class="formula-box">
+                        <strong>ROP = DLT + Safety_Stock</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Inventory Position (Pozycja zapasu)</h4>
+                    <p>Nie tylko to co masz na magazynie, ale też to co jest już zamówione i w drodze.</p>
+                    <div class="formula-box">
+                        Inventory_Position = Stock_On_Hand + On_Order
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h4>Order Quantity (Ile zamówić)</h4>
+                    <p>Różnica między ROP a tym co masz. MAX(0,...) zapobiega ujemnym zamówieniom.</p>
+                    <div class="formula-box">
+                        Order_Q = MAX(0, ROP - Inventory_Position)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">7</div>
+                <div class="step-content">
+                    <h4>Order MOQ (Zaokrąglenie do minimalnej partii)</h4>
+                    <p>Dostawcy często wymagają zamówień w pełnych kartonach/paletach. CEILING.MATH zaokrągla w górę.</p>
+                    <div class="formula-box">
+                        Order_Q_MOQ = CEILING.MATH(Order_Q, MOQ)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEKCJA 5: PRZYKŁAD -->
+            <h2>5. Przykład: Styczeń 2025</h2>
+            
+            <h3>Dane wejściowe (Inputs)</h3>
+            
+            <table>
+                <tr>
+                    <th>Parametr</th>
+                    <th>Wartość</th>
+                </tr>
+                <tr>
+                    <td>Forecast Rain (mm)</td>
+                    <td>90</td>
+                </tr>
+                <tr>
+                    <td>Forecast Temperature (°C)</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>Forecast Wind (km/h)</td>
+                    <td>18</td>
+                </tr>
+                <tr>
+                    <td>Service Level</td>
+                    <td>95%</td>
+                </tr>
+                <tr>
+                    <td>Lead Time</td>
+                    <td>30 dni (1 miesiąc)</td>
+                </tr>
+                <tr>
+                    <td>Stock On Hand</td>
+                    <td>2,100 szt.</td>
+                </tr>
+                <tr>
+                    <td>On Order</td>
+                    <td>700 szt.</td>
+                </tr>
+                <tr>
+                    <td>MOQ</td>
+                    <td>200 szt.</td>
+                </tr>
+            </table>
+            
+            <h3>Obliczenia (Calculations)</h3>
+            
+            <table>
+                <tr>
+                    <th>Krok</th>
+                    <th>Formuła</th>
+                    <th>Wynik</th>
+                </tr>
+                <tr>
+                    <td>Demand Forecast</td>
+                    <td>-2971.68 + 58.40×90 + 55.76×5 + 32.90×18</td>
+                    <td><strong>3,156 szt.</strong></td>
+                </tr>
+                <tr>
+                    <td>DLT</td>
+                    <td>3,156 × 1</td>
+                    <td>3,156 szt.</td>
+                </tr>
+                <tr>
+                    <td>z (dla 95%)</td>
+                    <td>NORM.S.INV(0.95)</td>
+                    <td>1.645</td>
+                </tr>
+                <tr>
+                    <td>Sigma_LT</td>
+                    <td>406 × √1</td>
+                    <td>406</td>
+                </tr>
+                <tr>
+                    <td>Safety Stock</td>
+                    <td>1.645 × 406</td>
+                    <td><strong>668 szt.</strong></td>
+                </tr>
+                <tr>
+                    <td>ROP</td>
+                    <td>3,156 + 668</td>
+                    <td><strong>3,824 szt.</strong></td>
+                </tr>
+                <tr>
+                    <td>Inventory Position</td>
+                    <td>2,100 + 700</td>
+                    <td>2,800 szt.</td>
+                </tr>
+                <tr>
+                    <td>Order_Q</td>
+                    <td>MAX(0, 3824 - 2800)</td>
+                    <td>1,024 szt.</td>
+                </tr>
+                <tr>
+                    <td>Order_Q_MOQ</td>
+                    <td>CEILING.MATH(1024, 200)</td>
+                    <td><strong>1,200 szt.</strong></td>
+                </tr>
+            </table>
+            
+            <div class="result-box">
+                <strong>DECYZJA ZAKUPOWA</strong>
+                <span class="big-number">ZAMÓW 1,200 szt.</span>
+                <p>Reorder Flag: ORDER (Inventory Position 2,800 &lt; ROP 3,824)</p>
+            </div>
+            
+            <!-- SEKCJA 6: ARKUSZE -->
+            <h2>6. Struktura pliku Excel</h2>
+            
+            <table>
+                <tr>
+                    <th>Arkusz</th>
+                    <th>Zawartość</th>
+                </tr>
+                <tr>
+                    <td><strong>Data</strong></td>
+                    <td>Dane historyczne (19 miesięcy): Rain, Temp, Wind, Sales</td>
+                </tr>
+                <tr>
+                    <td><strong>Regression_Output</strong></td>
+                    <td>Wynik regresji prostej (tylko Rainfall) — R² = 82%</td>
+                </tr>
+                <tr>
+                    <td><strong>Procurement_Plan</strong></td>
+                    <td>Kalkulator ROP/SS/Order dla modelu 1-zmiennego</td>
+                </tr>
+                <tr>
+                    <td><strong>Regression_Output_Weather</strong></td>
+                    <td>Wynik regresji wielorakiej (Rain+Temp+Wind) — R² = 90%</td>
+                </tr>
+                <tr>
+                    <td><strong>Procurement_Plan_Weather</strong></td>
+                    <td>Pełny kalkulator procurement dla modelu pogodowego</td>
+                </tr>
+            </table>
+            
+            <!-- SEKCJA 7: SKILLS -->
+            <h2>7. Zastosowane umiejętności</h2>
+            
+            <p>
+                <span class="tag">Regresja liniowa</span>
+                <span class="tag">Regresja wieloraka</span>
+                <span class="tag">Driver-based forecasting</span>
+                <span class="tag green">Safety Stock</span>
+                <span class="tag green">Reorder Point (ROP)</span>
+                <span class="tag green">MOQ handling</span>
+                <span class="tag gray">Named ranges (Excel)</span>
+                <span class="tag gray">Conditional formatting</span>
+                <span class="tag gray">NORM.S.INV</span>
+                <span class="tag gray">CEILING.MATH</span>
+            </p>
+            
+            <!-- SEKCJA 8: WNIOSKI -->
+            <h2>8. Wnioski i rekomendacje</h2>
+            
+            <div class="highlight-box">
+                <strong>Kluczowe wnioski:</strong>
+                <ul>
+                    <li><strong>Pogoda jest silnym driverem popytu</strong> — model z 3 zmiennymi wyjaśnia 90% zmienności sprzedaży</li>
+                    <li><strong>Rainfall i Temperature</strong> są statystycznie istotne; Wind — nie</li>
+                    <li><strong>Model 3-zmienny ma mniejszy błąd</strong> (406 vs 518) → mniejszy Safety Stock → niższe koszty zapasu</li>
+                    <li><strong>Automatyzacja w Excelu</strong> pozwala na szybkie przeliczanie scenariuszy (low/base/high rain)</li>
+                </ul>
+            </div>
+            
+            <h3>Możliwe rozszerzenia:</h3>
+            <ul>
+                <li>Dodanie sezonowości (miesiąc jako zmienna dummy)</li>
+                <li>Użycie liczby "dni deszczowych" zamiast sumy mm</li>
+                <li>Wdrożenie w Power BI z automatycznym pobieraniem prognozy pogody</li>
+                <li>Rozszerzenie na wiele SKU z różnymi współczynnikami</li>
+            </ul>
+            
+            <!-- AUTHOR -->
+            <div class="author-box">
+                <h3>Autor</h3>
+                <p><strong>Marcin Banach</strong></p>
+                <p>GitHub: <a href="https://github.com/mbimarban" target="_blank">@mbimarban</a></p>
+                <br>
+                <p>Jeśli ten projekt był pomocny, zostaw gwiazdkę na GitHubie!</p>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
